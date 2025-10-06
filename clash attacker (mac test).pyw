@@ -392,6 +392,9 @@ def parse_amount(s: Any):
     if s is None: return ""
     s = str(s).strip().replace(",", "")
     s = s.replace("o","0").replace("O","0").replace("l","1").replace("I","1")
+    # Some OCR results contain internal spaces (e.g. "1 234 567").
+    # Remove all whitespace so the numeric regex below still matches.
+    s = re.sub(r"\s+", "", s)
     m = re.match(r'^\s*(\d+(?:\.\d+)?)\s*([km]?)\s*$', s)
     if not m: return ""
     val = float(m.group(1)); unit = m.group(2).lower()
