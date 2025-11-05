@@ -42,6 +42,7 @@ DEBUG = True            # console logs
 
 # Allowed colors (exact)
 ALLOWED_LOOT   = ["#FFFBCC", "#FFE8FD", "#F3F3F3","#E0DCB3","#E0CCDE","#D5D5D5"]
+LOOT_COLOR_TOL = 18  # allow slight shading differences from the whitelist
 Menu_Closed_Chat_Color= ["#EA8A3B","#CE7934"]
 Menu_Open_Chat_Color = ["#75451E","#673D1A"]
 Next_Raid_Color = ["#FCBB36","#DDA32F"]
@@ -212,11 +213,6 @@ def make_snap_path(directory: str, prefix: str="snap") -> str:
     ts = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + "_" + f"{int(datetime.now().microsecond/1000):03d}"
     return os.path.join(directory, f"{prefix}_{ts}.bmp")
 
-def hex_to_rgb_int(hx: str) -> int:
-    s = hx.strip()
-    if s.startswith("#"): s = s[1:]
-    return int(s, 16)
-
 def snap_client_region_pct_bw(x1p: float, y1p: float, x2p: float, y2p: float,
                               allowed_hex_list: List[str], save_dir: str, prefix: str) -> str:
     L,T,W,H = get_client_rect_screen(_selected_hwnd)
@@ -230,9 +226,19 @@ def snap_client_region_pct_bw(x1p: float, y1p: float, x2p: float, y2p: float,
     with mss.mss() as sct:
         img = sct.grab({"left": x1, "top": y1, "width": w, "height": h})
         arr = np.array(img)[:,:,:3][:,:,::-1]  # BGRA -> RGB
-    allowed = set(hex_to_rgb_int(h) for h in allowed_hex_list)
-    rgb_int = (arr[:,:,0].astype(np.uint32)<<16) | (arr[:,:,1].astype(np.uint32)<<8) | arr[:,:,2].astype(np.uint32)
-    mask = np.isin(rgb_int, list(allowed))
+
+    # Allow small per-channel deviations so mild shading or anti-aliasing does not
+    # drop the digits completely.  Exact matches were too strict on some systems
+    # (Retina/metal rendering), producing blank OCR inputs.
+    arr16 = arr.astype(np.int16)
+    tol = max(0, int(LOOT_COLOR_TOL))
+    allowed = np.array(parse_hex_colors(allowed_hex_list), dtype=np.int16)
+    mask = np.zeros(arr.shape[:2], dtype=bool)
+    for rgb in allowed:
+        diff = np.abs(arr16 - rgb)
+        close = np.all(diff <= tol, axis=2)
+        mask |= close
+
     bw = np.where(mask[:,:,None], 0, 255).astype(np.uint8)
     bw = np.repeat(bw, 3, axis=2)
     im = Image.fromarray(bw, mode="RGB")
