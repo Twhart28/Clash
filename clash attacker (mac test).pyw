@@ -906,7 +906,8 @@ class ControlPanel(tk.Tk):
                 # Decision
                 if should_attack(loot_obj):
                     drag_attack()
-                    break
+                    start_raid()
+                    continue
 
             if _stop_flag.is_set():
                 break
