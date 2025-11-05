@@ -38,7 +38,7 @@ def _hard_stop():
 keyboard.add_hotkey('esc', _hard_stop, suppress=True)
 # ---------------- Config ----------------
 KEEP_SNAPSHOTS = False   # False = delete OCR BMPs after use
-DEBUG = False            # console logs
+DEBUG = True            # console logs
 
 # Allowed colors (exact)
 ALLOWED_LOOT   = ["#FFFBCC", "#FFE8FD", "#F3F3F3","#E0DCB3","#E0CCDE","#D5D5D5"]
@@ -46,6 +46,7 @@ Menu_Closed_Chat_Color= ["#EA8A3B","#CE7934"]
 Menu_Open_Chat_Color = ["#75451E","#673D1A"]
 Next_Raid_Color = ["#FCBB36","#DDA32F"]
 Surrender_Okay_Color = ["#D5F376","#BFD96B"] #Color of okay surrender and return home button
+Find_Match_Color = ["#F4A826"]
 
 # Use the resolution you used when taking AHK measurements:
 MEASURE_W, MEASURE_H = 1920, 1080
@@ -53,7 +54,7 @@ def PXW(x: int) -> float: return round(x / MEASURE_W, 6)
 def PYW(y: int) -> float: return round(y / MEASURE_H, 6)
 
 # Regions (raw pixels from your AHK measurements)
-LOOT_BOX_PX   = (57,  105, 250, 263)
+LOOT_BOX_PX   = (58, 111, 221, 270)
 
 def percent_box(box_px: Tuple[int,int,int,int]) -> Tuple[float,float,float,float]:
     x1, y1, x2, y2 = box_px
@@ -391,6 +392,9 @@ def parse_amount(s: Any):
     if s is None: return ""
     s = str(s).strip().replace(",", "")
     s = s.replace("o","0").replace("O","0").replace("l","1").replace("I","1")
+    # Some OCR results contain internal spaces (e.g. "1 234 567").
+    # Remove all whitespace so the numeric regex below still matches.
+    s = re.sub(r"\s+", "", s)
     m = re.match(r'^\s*(\d+(?:\.\d+)?)\s*([km]?)\s*$', s)
     if not m: return ""
     val = float(m.group(1)); unit = m.group(2).lower()
@@ -420,8 +424,8 @@ def should_attack(loot: Dict[str,int]) -> bool:
 # ---------------- Actions (from your AHK) ----------------
 def start_raid():
     click_pct(PXW(106),   PYW(970))
-    _ = wait_pixel_color_pct(PXW(537), PYW(1034), Next_Raid_Color, 10000, 0, 100)
-    click_pct(PXW(537), PYW(1034))
+    _ = wait_pixel_color_pct(PXW(397), PYW(774), Find_Match_Color, 10000, 30, 100)
+    click_pct(PXW(397), PYW(774))
     _ = wait_pixel_color_pct(PXW(1877), PYW(801), Next_Raid_Color, 12000, 30, 50)
 
 def next_raid():
@@ -888,18 +892,19 @@ class ControlPanel(tk.Tk):
         # Search loop for bases
         start_raid()
         while not _stop_flag.is_set():
-            next_raid()
             vals = get_loot(screenshot_dir)
             success, loot_obj, why = try_normalize_loot(vals)
             if not success:
                 if DEBUG: print("Loot OCR failed:", why, " -> skipping base")
-                continue
-            # Decision
-            if should_attack(loot_obj):
-                drag_attack()
-                break
             else:
-                continue
+                # Decision
+                if should_attack(loot_obj):
+                    drag_attack()
+                    break
+
+            if _stop_flag.is_set():
+                break
+            next_raid()
 
     def _center_on_screen(self):
         self.update_idletasks()
@@ -910,23 +915,6 @@ class ControlPanel(tk.Tk):
         x = (sw - w) // 2
         y = (sh - h) // 2
         self.geometry(f"+{x}+{y}")
-
-        # Ensure OCR is available
-        if not _READER_READY.is_set() or _READER is None:
-            try:
-                ensure_reader()
-            except Exception as e:
-                messagebox.showerror("OCR not ready", f"EasyOCR init failed:\n{e}")
-                return
-
-        # Use the selected window
-        global _selected_hwnd, KEEP_SNAPSHOTS
-        _selected_hwnd = hwnd
-        set_foreground(hwnd)
-
-        # Where snapshots go
-        screenshot_dir = os.path.join(os.path.expanduser("~"), "Pictures", "Screenshots")
-        os.makedirs(screenshot_dir, exist_ok=True)
 
     def test_loot_ocr(self):
         hwnd = self.selected_hwnd()
