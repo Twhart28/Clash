@@ -27,6 +27,12 @@ except Exception:
 
 import sys  # up with the other imports
 
+
+import pyautogui as pag
+import time
+
+pag.PAUSE = 0         # remove default 0.1s pause
+
 # --- Hard-stop on Escape (global) ---
 def _hard_stop():
     try:
@@ -136,6 +142,33 @@ def drag_pct(x1p: float, y1p: float, x2p: float, y2p: float, steps: int=0, delay
     else:
         pag.moveTo(x2, y2, duration=0)
     pag.mouseUp()
+
+def line_clicks_pct(x1p, y1p, x2p, y2p, clicks: int = 25, per_click_delay_ms: int | None = None):
+    """
+    Move+click at `clicks` evenly spaced points from (x1p,y1p) to (x2p,y2p).
+    x?p/y?p are already in your PXW/PYW percentage-space (so pass PXW(...), PYW(...)).
+    If per_click_delay_ms is None, no delay is used. Use 0 for max speed.
+    """
+    if clicks <= 0:
+        return
+
+    # use local variable for speed
+    n = int(clicks)
+    for k in range(n):
+        if _stop_flag.is_set():          # preserve original stop behavior
+            return
+
+        t = 0.0 if n == 1 else (k / (n - 1))
+        xp = x1p + (x2p - x1p) * t
+        yp = y1p + (y2p - y1p) * t
+
+        x, y = abs_from_pct(xp, yp)
+        # one-call move+click -> fastest PyAutoGUI path
+        pag.click(x=x, y=y, duration=0)
+
+        # small sleep only if requested (ms -> sec)
+        if per_click_delay_ms:
+            time.sleep(per_click_delay_ms / 1000.0)
 
 def wheel_down(notches=1):
     for _ in range(max(1, int(notches))):
@@ -442,69 +475,35 @@ def drag_attack():
     set_foreground(_selected_hwnd)
     steps, delay = 10, 5
     for _ in range(20): wheel_down(1)
-    drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=10)
-
-    keyboard.send("r"); time.sleep(1)
-    click_pct(PXW(1688), PYW(359))
-    keyboard.send("r")
-
-    keyboard.send("w"); time.sleep(1)
-    click_pct(PXW(911), PYW(869))
-    keyboard.send("w")
-
-    keyboard.send("z"); time.sleep(1)
-    pag.click()
-
-    keyboard.send("2"); time.sleep(1)
-    pag.click()
+    drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=100)
 
     keyboard.send("1"); time.sleep(1)
-    click_pct(PXW(1049), PYW(844))
-    click_pct(PXW(1627), PYW(398)); time.sleep(10.0)
 
-    startXp, startYp = PXW(1402), PYW(538)
-    endXp,   endYp   = PXW(1268), PYW(656)
-    clickCount, totalSteps = 13, 13
-    clickInterval = round(totalSteps/clickCount)
-    dxp = (endXp-startXp)/totalSteps; dyp = (endYp-startYp)/totalSteps
-    cxp, cyp = startXp, startYp
-    x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
-    for i in range(1, totalSteps+1):
-        if _stop_flag.is_set(): return
-        cxp += dxp; cyp += dyp
-        x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
-        if (i % clickInterval) == 0: pag.click()
-        time.sleep(delay/1000.0)
+    time.sleep(.3)
 
-    keyboard.send("2"); time.sleep(1)
-    clickCount = 13; clickInterval = round(totalSteps/clickCount)
-    cxp, cyp = startXp, startYp
-    x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
-    for i in range(1, totalSteps+1):
-        if _stop_flag.is_set(): return
-        cxp += dxp; cyp += dyp
-        x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
-        if (i % clickInterval) == 0: pag.click()
-        time.sleep(delay/1000.0)
+    line_clicks_pct(PXW(1700), PYW(407), PXW(971),  PYW(896), clicks=25, per_click_delay_ms=10)
 
-    keyboard.send("q"); time.sleep(1); click_pct(PXW(1335), PYW(597))
-    keyboard.send("e"); time.sleep(1); click_pct(PXW(1335), PYW(597))
-    time.sleep(10)
-    keyboard.send("q"); keyboard.send("e")
+    time.sleep(.3)
 
-    keyboard.send("a"); time.sleep(1)
-    click_pct(PXW(921), PYW(492))
-    click_pct(PXW(1040), PYW(401))
-    click_pct(PXW(1201), PYW(307));time.sleep(5.0)
-    click_pct(PXW(903), PYW(361))
-    click_pct(PXW(1030), PYW(260))
-    keyboard.send("s"); time.sleep(1)
-    click_pct(PXW(946), PYW(339))
+    line_clicks_pct(PXW(855),  PYW(886), PXW(173),  PYW(429), clicks=25, per_click_delay_ms=10)
+
+    set_foreground(_selected_hwnd)
+    steps, delay = 10, 5
+    for _ in range(20): wheel_down(1)
+    drag_pct(PXW(493), PYW(310), PXW(1130), PYW(788), steps=1, delay_ms=100)
+
+    time.sleep(.3)
+
+    line_clicks_pct(PXW(240),  PYW(550), PXW(963),  PYW(82),  clicks=25, per_click_delay_ms=10)
+    
+    time.sleep(.3)
+
+    line_clicks_pct(PXW(1056), PYW(99),  PXW(1669), PYW(500), clicks=25, per_click_delay_ms=10)
 
     tri_ok = wait_all_pixels_pct([
         (PXW(347), PYW(555), "#000000"),
         (PXW(1569), PYW(624), "#000000"),
-    ], 55000, 0, 100)
+    ], 8000, 0, 100)
 
     if tri_ok:
         click_pct(PXW(1051), PYW(908))
