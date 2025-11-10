@@ -473,7 +473,7 @@ def next_raid():
 
 def drag_attack():
     set_foreground(_selected_hwnd)
-    steps, delay = 10, 5
+    steps, delay = 10, 100
     for _ in range(20): wheel_down(1)
     drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=100)
 
@@ -487,8 +487,10 @@ def drag_attack():
 
     line_clicks_pct(PXW(855),  PYW(886), PXW(173),  PYW(429), clicks=25, per_click_delay_ms=10)
 
+    time.sleep(.3)
+    
     set_foreground(_selected_hwnd)
-    steps, delay = 10, 5
+    steps, delay = 10, 100
     for _ in range(20): wheel_down(1)
     drag_pct(PXW(493), PYW(310), PXW(1130), PYW(788), steps=1, delay_ms=100)
 
