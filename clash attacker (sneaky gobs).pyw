@@ -54,6 +54,7 @@ Menu_Open_Chat_Color = ["#75451E","#673D1A"]
 Next_Raid_Color = ["#FCBB36","#DDA32F"]
 Surrender_Okay_Color = ["#D5F376","#BFD96B"] #Color of okay surrender and return home button
 Find_Match_Color = ["#F4A826"]
+Attack_Color = ["#BAE886"]
 
 # Use the resolution you used when taking AHK measurements:
 MEASURE_W, MEASURE_H = 1920, 1080
@@ -465,6 +466,8 @@ def start_raid():
     click_pct(PXW(106),   PYW(970))
     _ = wait_pixel_color_pct(PXW(397), PYW(774), Find_Match_Color, 10000, 30, 100)
     click_pct(PXW(397), PYW(774))
+    _ = wait_pixel_color_pct(PXW(1760), PYW(911), Attack_Color, 5000, 30, 50)
+    click_pct(PXW(1760), PYW(911))
     _ = wait_pixel_color_pct(PXW(1877), PYW(801), Next_Raid_Color, 12000, 30, 50)
 
 def next_raid():
