@@ -495,10 +495,13 @@ def drag_attack():
     time.sleep(0.1)
     keyboard.send("r")
     time.sleep(0.1)
-    
-    keyboard.send("w"); time.sleep(1)
-    click_pct(PXW(911), PYW(869))
+
     keyboard.send("w")
+    time.sleep(1)
+    click_pct(PXW(911), PYW(869))
+    time.sleep(0.1)
+    keyboard.send("w")
+    time.sleep(0.1)
 
     keyboard.send("z"); time.sleep(1)
     pag.click()
