@@ -479,48 +479,77 @@ def next_raid():
 
 def drag_attack():
     set_foreground(_selected_hwnd)
-    steps, delay = 10, 10
+    steps, delay = 10, 5
     for _ in range(20): wheel_down(1)
+    drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=10)
 
-    drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
-    time.sleep(0.4)
-    drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
-    time.sleep(0.1)
-    drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
-    
+    keyboard.send("r"); time.sleep(1)
+    click_pct(PXW(1688), PYW(359))
+    keyboard.send("r")
+
+    keyboard.send("w"); time.sleep(1)
+    click_pct(PXW(911), PYW(869))
+    keyboard.send("w")
+
+    keyboard.send("z"); time.sleep(1)
+    pag.click()
+
+    keyboard.send("2"); time.sleep(1)
+    pag.click()
+
     keyboard.send("1"); time.sleep(1)
+    click_pct(PXW(1049), PYW(844))
+    click_pct(PXW(1627), PYW(398)); time.sleep(10.0)
 
-    line_clicks_pct(PXW(1700), PYW(407), PXW(971),  PYW(896), clicks=25, per_click_delay_ms=10)
+    startXp, startYp = PXW(1402), PYW(538)
+    endXp,   endYp   = PXW(1268), PYW(656)
+    clickCount, totalSteps = 13, 13
+    clickInterval = round(totalSteps/clickCount)
+    dxp = (endXp-startXp)/totalSteps; dyp = (endYp-startYp)/totalSteps
+    cxp, cyp = startXp, startYp
+    x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
+    for i in range(1, totalSteps+1):
+        if _stop_flag.is_set(): return
+        cxp += dxp; cyp += dyp
+        x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
+        if (i % clickInterval) == 0: pag.click()
+        time.sleep(delay/1000.0)
 
-    time.sleep(.1)
+    keyboard.send("2"); time.sleep(1)
+    clickCount = 13; clickInterval = round(totalSteps/clickCount)
+    cxp, cyp = startXp, startYp
+    x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
+    for i in range(1, totalSteps+1):
+        if _stop_flag.is_set(): return
+        cxp += dxp; cyp += dyp
+        x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
+        if (i % clickInterval) == 0: pag.click()
+        time.sleep(delay/1000.0)
 
-    line_clicks_pct(PXW(855),  PYW(886), PXW(173),  PYW(429), clicks=25, per_click_delay_ms=10)
+    keyboard.send("q"); time.sleep(1); click_pct(PXW(1335), PYW(597))
+    keyboard.send("e"); time.sleep(1); click_pct(PXW(1335), PYW(597))
+    time.sleep(10)
+    keyboard.send("q"); keyboard.send("e")
 
-    time.sleep(.1)
-    
-    drag_pct(PXW(493), PYW(310), PXW(1130), PYW(788), steps=1, delay_ms=50)
-    time.sleep(.1)
-    drag_pct(PXW(493), PYW(310), PXW(1130), PYW(788), steps=1, delay_ms=50)
-
-    time.sleep(.1)
-
-    line_clicks_pct(PXW(240),  PYW(550), PXW(963),  PYW(82),  clicks=25, per_click_delay_ms=10)
-    
-    time.sleep(.1)
-
-    line_clicks_pct(PXW(1056), PYW(99),  PXW(1669), PYW(500), clicks=25, per_click_delay_ms=10)
+    keyboard.send("a"); time.sleep(1)
+    click_pct(PXW(921), PYW(492))
+    click_pct(PXW(1040), PYW(401))
+    click_pct(PXW(1201), PYW(307));time.sleep(5.0)
+    click_pct(PXW(903), PYW(361))
+    click_pct(PXW(1030), PYW(260))
+    keyboard.send("s"); time.sleep(1)
+    click_pct(PXW(946), PYW(339))
 
     tri_ok = wait_all_pixels_pct([
         (PXW(347), PYW(555), "#000000"),
         (PXW(1569), PYW(624), "#000000"),
-    ], 8000, 0, 100)
+    ], 55000, 0, 100)
 
     if tri_ok:
         click_pct(PXW(1051), PYW(908))
     else:
         click_pct(PXW(113),  PYW(858))
         _ = wait_pixel_color_pct(PXW(1229), PYW(649), Surrender_Okay_Color, 4000, 30, 100)
-        time.sleep(.2)
         click_pct(PXW(1229), PYW(649)); time.sleep(2)
         wait_all_pixels_pct([
             (PXW(347), PYW(555), "#000000"),
