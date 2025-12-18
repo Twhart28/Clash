@@ -467,9 +467,9 @@ def start_raid():
     _ = wait_pixel_color_pct(PXW(397), PYW(774), Find_Match_Color, 10000, 30, 100)
     time.sleep(0.1)
     click_pct(PXW(397), PYW(774))
-    _ = wait_pixel_color_pct(PXW(1760), PYW(911), Attack_Color, 5000, 50, 50)
+    _ = wait_pixel_color_pct(PXW(1753), PYW(874), Attack_Color, 5000, 50, 50)
     time.sleep(0.1)
-    click_pct(PXW(1760), PYW(911))
+    click_pct(PXW(1753), PYW(874))
     _ = wait_pixel_color_pct(PXW(1877), PYW(801), Next_Raid_Color, 12000, 30, 50)
     time.sleep(0.1)
 
@@ -488,7 +488,7 @@ def drag_attack():
     time.sleep(0.1)
     drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
     
-    keyboard.send("3"); time.sleep(1)
+    keyboard.send("1"); time.sleep(1)
 
     line_clicks_pct(PXW(1700), PYW(407), PXW(971),  PYW(896), clicks=25, per_click_delay_ms=10)
 
@@ -520,6 +520,7 @@ def drag_attack():
     else:
         click_pct(PXW(113),  PYW(858))
         _ = wait_pixel_color_pct(PXW(1229), PYW(649), Surrender_Okay_Color, 4000, 30, 100)
+        time.sleep(.2)
         click_pct(PXW(1229), PYW(649)); time.sleep(2)
         wait_all_pixels_pct([
             (PXW(347), PYW(555), "#000000"),
