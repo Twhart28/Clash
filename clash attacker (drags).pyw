@@ -488,8 +488,10 @@ def drag_attack():
     time.sleep(0.1)
     drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
 
-    keyboard.send("r"); time.sleep(1)
+    keyboard.send("r")
+    time.sleep(1.0)
     click_pct(PXW(1688), PYW(359))
+    time.sleep(0.1)
     keyboard.send("r")
 
     keyboard.send("w"); time.sleep(1)
