@@ -54,7 +54,7 @@ Menu_Open_Chat_Color = ["#75451E","#673D1A"]
 Next_Raid_Color = ["#FCBB36","#DDA32F"]
 Surrender_Okay_Color = ["#D5F376","#BFD96B"] #Color of okay surrender and return home button
 Find_Match_Color = ["#F4A826"]
-Attack_Color = ["#BAE886"]
+Attack_Color = ["#D0FD9E"]
 
 # Use the resolution you used when taking AHK measurements:
 MEASURE_W, MEASURE_H = 1920, 1080
@@ -465,10 +465,13 @@ def should_attack(loot: Dict[str,int]) -> bool:
 def start_raid():
     click_pct(PXW(106),   PYW(970))
     _ = wait_pixel_color_pct(PXW(397), PYW(774), Find_Match_Color, 10000, 30, 100)
+    time.sleep(0.1)
     click_pct(PXW(397), PYW(774))
-    _ = wait_pixel_color_pct(PXW(1760), PYW(911), Attack_Color, 5000, 30, 50)
+    _ = wait_pixel_color_pct(PXW(1760), PYW(911), Attack_Color, 5000, 50, 50)
+    time.sleep(0.1)
     click_pct(PXW(1760), PYW(911))
     _ = wait_pixel_color_pct(PXW(1877), PYW(801), Next_Raid_Color, 12000, 30, 50)
+    time.sleep(0.1)
 
 def next_raid():
     click_pct(PXW(1877), PYW(801)); time.sleep(1.0)
@@ -480,10 +483,12 @@ def drag_attack():
     for _ in range(20): wheel_down(1)
 
     drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
+    time.sleep(0.4)
+    drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
     time.sleep(0.1)
     drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
     
-    keyboard.send("1"); time.sleep(1)
+    keyboard.send("3"); time.sleep(1)
 
     line_clicks_pct(PXW(1700), PYW(407), PXW(971),  PYW(896), clicks=25, per_click_delay_ms=10)
 
