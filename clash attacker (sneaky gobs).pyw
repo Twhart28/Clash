@@ -31,7 +31,8 @@ import sys  # up with the other imports
 import pyautogui as pag
 import time
 
-pag.PAUSE = 0         # remove default 0.1s pause
+GLOBAL_PAUSE = 0.05  # adjust global PyAutoGUI pacing
+pag.PAUSE = GLOBAL_PAUSE
 
 # --- Hard-stop on Escape (global) ---
 def _hard_stop():
@@ -129,7 +130,7 @@ def abs_from_pct(px: float, py: float) -> Tuple[int,int]:
 # ---------------- Mouse / wheel / pixel ----------------
 def click_pct(px: float, py: float):
     x,y = abs_from_pct(px, py)
-    pag.moveTo(x, y, duration=0); pag.click()
+    pag.click(x=x, y=y, duration=0)
 
 def drag_pct(x1p: float, y1p: float, x2p: float, y2p: float, steps: int=0, delay_ms: int=0):
     x1,y1 = abs_from_pct(x1p, y1p); x2,y2 = abs_from_pct(x2p, y2p)
@@ -463,6 +464,7 @@ def should_attack(loot: Dict[str,int]) -> bool:
 
 # ---------------- Actions (from your AHK) ----------------
 def start_raid():
+    set_foreground(_selected_hwnd)
     click_pct(PXW(106),   PYW(970))
     _ = wait_pixel_color_pct(PXW(397), PYW(774), Find_Match_Color, 10000, 30, 100)
     time.sleep(0.1)
@@ -474,6 +476,7 @@ def start_raid():
     time.sleep(0.1)
 
 def next_raid():
+    set_foreground(_selected_hwnd)
     click_pct(PXW(1877), PYW(801)); time.sleep(1.0)
     _ = wait_pixel_color_pct(PXW(1877), PYW(801), Next_Raid_Color, 12000, 30, 50)
 
