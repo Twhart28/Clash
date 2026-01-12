@@ -31,8 +31,7 @@ import sys  # up with the other imports
 import pyautogui as pag
 import time
 
-GLOBAL_PAUSE = 0.05  # adjust global PyAutoGUI pacing
-pag.PAUSE = GLOBAL_PAUSE
+pag.PAUSE = 0         # remove default 0.1s pause
 
 # --- Hard-stop on Escape (global) ---
 def _hard_stop():
@@ -130,7 +129,7 @@ def abs_from_pct(px: float, py: float) -> Tuple[int,int]:
 # ---------------- Mouse / wheel / pixel ----------------
 def click_pct(px: float, py: float):
     x,y = abs_from_pct(px, py)
-    pag.click(x=x, y=y, duration=0)
+    pag.moveTo(x, y, duration=0); pag.click()
 
 def drag_pct(x1p: float, y1p: float, x2p: float, y2p: float, steps: int=0, delay_ms: int=0):
     x1,y1 = abs_from_pct(x1p, y1p); x2,y2 = abs_from_pct(x2p, y2p)
@@ -464,7 +463,6 @@ def should_attack(loot: Dict[str,int]) -> bool:
 
 # ---------------- Actions (from your AHK) ----------------
 def start_raid():
-    set_foreground(_selected_hwnd)
     click_pct(PXW(106),   PYW(970))
     _ = wait_pixel_color_pct(PXW(397), PYW(774), Find_Match_Color, 10000, 30, 100)
     time.sleep(0.1)
@@ -476,65 +474,84 @@ def start_raid():
     time.sleep(0.1)
 
 def next_raid():
-    set_foreground(_selected_hwnd)
     click_pct(PXW(1877), PYW(801)); time.sleep(1.0)
     _ = wait_pixel_color_pct(PXW(1877), PYW(801), Next_Raid_Color, 12000, 30, 50)
 
-def attack():
+def drag_attack():
     set_foreground(_selected_hwnd)
+    steps, delay = 10, 10
     for _ in range(20): wheel_down(1)
 
     drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
+    time.sleep(0.4)
+    drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
+    time.sleep(0.1)
+    drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
+    time.sleep(0.1)
 
-    #RC deploy and ability
-    keyboard.send("r"); time.sleep(1)
-    click_pct(PXW(1688), PYW(359))
     keyboard.send("r")
+    time.sleep(1.0)
+    click_pct(PXW(1688), PYW(359))
+    time.sleep(0.1)
+    keyboard.send("r")
+    time.sleep(0.1)
 
-    #Queen deploy and ability
-    keyboard.send("w"); time.sleep(1)
-    click_pct(PXW(911), PYW(869))
     keyboard.send("w")
+    time.sleep(1)
+    click_pct(PXW(911), PYW(869))
+    time.sleep(0.1)
+    keyboard.send("w")
+    time.sleep(0.1)
 
-    #Siege and balloon deploy
     keyboard.send("z"); time.sleep(1)
-    click_pct(PXW(911), PYW(869))
-    keyboard.send("z")
-    keyboard.send("2"); time.sleep(1)
-    click_pct(PXW(911), PYW(869))
+    pag.click()
 
-    #Funnel dragons deploy
+    keyboard.send("2"); time.sleep(1)
+    pag.click()
+
     keyboard.send("1"); time.sleep(1)
     click_pct(PXW(1049), PYW(844))
-    click_pct(PXW(1627), PYW(398))
-    time.sleep(10.0)
+    click_pct(PXW(1627), PYW(398)); time.sleep(10.0)
 
-    #Main dragon and balloon deploy
-    line_clicks_pct(PXW(1402),  PYW(538), PXW(1268),  PYW(656),  clicks=13, per_click_delay_ms=5)
+    startXp, startYp = PXW(1402), PYW(538)
+    endXp,   endYp   = PXW(1268), PYW(656)
+    clickCount, totalSteps = 13, 13
+    clickInterval = round(totalSteps/clickCount)
+    dxp = (endXp-startXp)/totalSteps; dyp = (endYp-startYp)/totalSteps
+    cxp, cyp = startXp, startYp
+    x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
+    for i in range(1, totalSteps+1):
+        if _stop_flag.is_set(): return
+        cxp += dxp; cyp += dyp
+        x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
+        if (i % clickInterval) == 0: pag.click()
+        time.sleep(delay/1000.0)
+
     keyboard.send("2"); time.sleep(1)
-    line_clicks_pct(PXW(1402),  PYW(538), PXW(1268),  PYW(656),  clicks=7, per_click_delay_ms=5)
+    clickCount = 13; clickInterval = round(totalSteps/clickCount)
+    cxp, cyp = startXp, startYp
+    x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
+    for i in range(1, totalSteps+1):
+        if _stop_flag.is_set(): return
+        cxp += dxp; cyp += dyp
+        x,y = abs_from_pct(cxp, cyp); pag.moveTo(x,y, duration=0)
+        if (i % clickInterval) == 0: pag.click()
+        time.sleep(delay/1000.0)
 
-    #Warden and minion prince deploy
-    keyboard.send("q"); time.sleep(1)
-    click_pct(PXW(1335), PYW(597))
-    keyboard.send("e"); time.sleep(1)
-    click_pct(PXW(1335), PYW(597))
+    keyboard.send("q"); time.sleep(1); click_pct(PXW(1335), PYW(597))
+    keyboard.send("e"); time.sleep(1); click_pct(PXW(1335), PYW(597))
     time.sleep(10)
-    keyboard.send("q")
-    keyboard.send("e")
+    keyboard.send("q"); keyboard.send("e")
 
-    #Rage spell deploy
     keyboard.send("a"); time.sleep(1)
     click_pct(PXW(921), PYW(492))
     click_pct(PXW(1040), PYW(401))
-    click_pct(PXW(1201), PYW(307))
-    time.sleep(5.0)
+    click_pct(PXW(1201), PYW(307));time.sleep(5.0)
     click_pct(PXW(903), PYW(361))
     click_pct(PXW(1030), PYW(260))
     keyboard.send("s"); time.sleep(1)
     click_pct(PXW(946), PYW(339))
 
-    # End attack logic
     tri_ok = wait_all_pixels_pct([
         (PXW(347), PYW(555), "#000000"),
         (PXW(1569), PYW(624), "#000000"),
@@ -545,7 +562,6 @@ def attack():
     else:
         click_pct(PXW(113),  PYW(858))
         _ = wait_pixel_color_pct(PXW(1229), PYW(649), Surrender_Okay_Color, 4000, 30, 100)
-        time.sleep(.2)
         click_pct(PXW(1229), PYW(649)); time.sleep(2)
         wait_all_pixels_pct([
             (PXW(347), PYW(555), "#000000"),
@@ -940,7 +956,7 @@ class ControlPanel(tk.Tk):
             else:
                 # Decision
                 if should_attack(loot_obj):
-                    attack()
+                    drag_attack()
                     start_raid()
                     continue
 
@@ -1015,3 +1031,4 @@ class ControlPanel(tk.Tk):
 if __name__ == "__main__":
     app = ControlPanel()
     app.mainloop()
+
