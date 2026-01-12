@@ -498,9 +498,9 @@ def attack():
 
     #Siege and balloon deploy
     keyboard.send("z"); time.sleep(1.1)
-    click_pct(PXW(911), PYW(869))
+    click_pct(PXW(911), PYW(869)); time.sleep(0.1)
     keyboard.send("2"); time.sleep(1.1)
-    click_pct(PXW(911), PYW(869))
+    click_pct(PXW(911), PYW(869)); time.sleep(0.1)
 
     #Funnel dragons deploy
     keyboard.send("1"); time.sleep(1.1)
@@ -512,25 +512,26 @@ def attack():
     line_clicks_pct(PXW(1402),  PYW(538), PXW(1268),  PYW(656),  clicks=13, per_click_delay_ms=5)
     keyboard.send("2"); time.sleep(1)
     line_clicks_pct(PXW(1402),  PYW(538), PXW(1268),  PYW(656),  clicks=7, per_click_delay_ms=5)
+    time.sleep(0.1)
 
     #Warden and minion prince deploy
     keyboard.send("q"); time.sleep(1.1)
-    click_pct(PXW(1335), PYW(597))
+    click_pct(PXW(1335), PYW(597)); time.sleep(0.1)
     keyboard.send("e"); time.sleep(1.1)
-    click_pct(PXW(1335), PYW(597))
+    click_pct(PXW(1335), PYW(597)); time.sleep(0.1)
     time.sleep(10)
     keyboard.send("q"); time.sleep(0.1)
     keyboard.send("e"); time.sleep(0.1)
 
     #Rage spell deploy
-    keyboard.send("a"); time.sleep(1)
-    click_pct(PXW(921), PYW(492))
-    click_pct(PXW(1040), PYW(401))
-    click_pct(PXW(1201), PYW(307))
+    keyboard.send("a"); time.sleep(1.1)
+    click_pct(PXW(921), PYW(492)); time.sleep(0.1)
+    click_pct(PXW(1040), PYW(401)); time.sleep(0.1)
+    click_pct(PXW(1201), PYW(307)); time.sleep(0.1)
     time.sleep(5.0)
-    click_pct(PXW(903), PYW(361))
-    click_pct(PXW(1030), PYW(260))
-    keyboard.send("s"); time.sleep(1)
+    click_pct(PXW(903), PYW(361)); time.sleep(0.1)
+    click_pct(PXW(1030), PYW(260)); time.sleep(0.1)
+    keyboard.send("s"); time.sleep(1.1)
     click_pct(PXW(946), PYW(339))
 
     # End attack logic
