@@ -480,38 +480,24 @@ def next_raid():
     click_pct(PXW(1877), PYW(801)); time.sleep(1.0)
     _ = wait_pixel_color_pct(PXW(1877), PYW(801), Next_Raid_Color, 12000, 30, 50)
 
-def drag_attack():
+def attack():
     set_foreground(_selected_hwnd)
     steps, delay = 10, 10
     for _ in range(20): wheel_down(1)
 
     drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
-    time.sleep(0.4)
-    drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
-    time.sleep(0.1)
-    drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
     
     keyboard.send("1"); time.sleep(1)
 
-    line_clicks_pct(PXW(1700), PYW(407), PXW(971),  PYW(896), clicks=25, per_click_delay_ms=10)
+    line_clicks_pct(PXW(1700), PYW(407), PXW(971),  PYW(896), clicks=25, per_click_delay_ms=5)
 
-    time.sleep(.1)
+    line_clicks_pct(PXW(855),  PYW(886), PXW(173),  PYW(429), clicks=25, per_click_delay_ms=5)
 
-    line_clicks_pct(PXW(855),  PYW(886), PXW(173),  PYW(429), clicks=25, per_click_delay_ms=10)
-
-    time.sleep(.1)
-    
-    drag_pct(PXW(493), PYW(310), PXW(1130), PYW(788), steps=1, delay_ms=50)
-    time.sleep(.1)
     drag_pct(PXW(493), PYW(310), PXW(1130), PYW(788), steps=1, delay_ms=50)
 
-    time.sleep(.1)
+    line_clicks_pct(PXW(240),  PYW(550), PXW(963),  PYW(82),  clicks=25, per_click_delay_ms=5)
 
-    line_clicks_pct(PXW(240),  PYW(550), PXW(963),  PYW(82),  clicks=25, per_click_delay_ms=10)
-    
-    time.sleep(.1)
-
-    line_clicks_pct(PXW(1056), PYW(99),  PXW(1669), PYW(500), clicks=25, per_click_delay_ms=10)
+    line_clicks_pct(PXW(1056), PYW(99),  PXW(1669), PYW(500), clicks=25, per_click_delay_ms=5)
 
     tri_ok = wait_all_pixels_pct([
         (PXW(347), PYW(555), "#000000"),
@@ -918,7 +904,7 @@ class ControlPanel(tk.Tk):
             else:
                 # Decision
                 if should_attack(loot_obj):
-                    drag_attack()
+                    attack()
                     start_raid()
                     continue
 
