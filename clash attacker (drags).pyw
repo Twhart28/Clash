@@ -487,51 +487,50 @@ def attack():
     drag_pct(PXW(1130), PYW(788), PXW(493), PYW(310), steps=1, delay_ms=50)
 
     #RC deploy and ability
-    pag.press("r"); time.sleep(1.1)
+    keyboard.send("r"); time.sleep(1.1)
     click_pct(PXW(1688), PYW(359))
-    time.sleep(0.1); pag.press("r")
+    time.sleep(0.1); keyboard.send("r"); time.sleep(0.1)
 
     #Queen deploy and ability
-    pag.press("w"); time.sleep(1.1)
+    keyboard.send("w"); time.sleep(1.1)
     click_pct(PXW(911), PYW(869))
-    time.sleep(0.1); pag.press("w")
-    time.sleep(0.1)
+    time.sleep(0.1); keyboard.send("w"); time.sleep(0.1)
 
     #Siege and balloon deploy
-    pag.press("z"); time.sleep(1.1)
+    keyboard.send("z"); time.sleep(1.1)
     click_pct(PXW(911), PYW(869))
-    pag.press("2"); time.sleep(1.1)
+    keyboard.send("2"); time.sleep(1.1)
     click_pct(PXW(911), PYW(869))
 
     #Funnel dragons deploy
-    pag.press("1"); time.sleep(1.1)
+    keyboard.send("1"); time.sleep(1.1)
     click_pct(PXW(1049), PYW(844))
     click_pct(PXW(1627), PYW(398))
     time.sleep(10.0)
 
     #Main dragon and balloon deploy
     line_clicks_pct(PXW(1402),  PYW(538), PXW(1268),  PYW(656),  clicks=13, per_click_delay_ms=5)
-    pag.press("2"); time.sleep(1)
+    keyboard.send("2"); time.sleep(1)
     line_clicks_pct(PXW(1402),  PYW(538), PXW(1268),  PYW(656),  clicks=7, per_click_delay_ms=5)
 
     #Warden and minion prince deploy
-    pag.press("q"); time.sleep(1)
+    keyboard.send("q"); time.sleep(1.1)
     click_pct(PXW(1335), PYW(597))
-    pag.press("e"); time.sleep(1)
+    keyboard.send("e"); time.sleep(1.1)
     click_pct(PXW(1335), PYW(597))
     time.sleep(10)
-    pag.press("q")
-    pag.press("e")
+    keyboard.send("q"); time.sleep(0.1)
+    keyboard.send("e"); time.sleep(0.1)
 
     #Rage spell deploy
-    pag.press("a"); time.sleep(1)
+    keyboard.send("a"); time.sleep(1)
     click_pct(PXW(921), PYW(492))
     click_pct(PXW(1040), PYW(401))
     click_pct(PXW(1201), PYW(307))
     time.sleep(5.0)
     click_pct(PXW(903), PYW(361))
     click_pct(PXW(1030), PYW(260))
-    pag.press("s"); time.sleep(1)
+    keyboard.send("s"); time.sleep(1)
     click_pct(PXW(946), PYW(339))
 
     # End attack logic
