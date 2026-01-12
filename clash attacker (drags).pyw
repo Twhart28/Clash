@@ -509,9 +509,9 @@ def attack():
     time.sleep(10.0)
 
     #Main dragon and balloon deploy
-    line_clicks_pct(PXW(1402),  PYW(538), PXW(1268),  PYW(656),  clicks=13, per_click_delay_ms=5)
-    keyboard.send("2"); time.sleep(1)
-    line_clicks_pct(PXW(1402),  PYW(538), PXW(1268),  PYW(656),  clicks=7, per_click_delay_ms=5)
+    line_clicks_pct(PXW(1402),  PYW(538), PXW(1268),  PYW(656),  clicks=15, per_click_delay_ms=10)
+    keyboard.send("2"); time.sleep(1.1)
+    line_clicks_pct(PXW(1402),  PYW(538), PXW(1268),  PYW(656),  clicks=9, per_click_delay_ms=10)
     time.sleep(0.1)
 
     #Warden and minion prince deploy
